@@ -66,26 +66,36 @@ namespace Mutagen.Bethesda.Synthesis.Internal
                 patchMod = null!;
 
                 TModGetter readOnlyPatchMod;
-                if (settings.SourcePath == null)
+                if (settings.SourcePaths == null
+                    || !settings.SourcePaths.Any())
                 {
                     readOnlyPatchMod = ModInstantiator<TModGetter>.Activator(modKey, settings.GameRelease);
                 }
+                else if (settings.SourcePaths.CountGreaterThan(0))
+                {
+                    readOnlyPatchMod = ModInstantiator<TModGetter>.Importer(new ModPath(modKey, settings.SourcePaths.First()), settings.GameRelease);
+                }
                 else
                 {
-                    readOnlyPatchMod = ModInstantiator<TModGetter>.Importer(new ModPath(modKey, settings.SourcePath), settings.GameRelease);
+                    throw new NotImplementedException();
                 }
                 loadOrder.Add(new ModListing<TModGetter>(readOnlyPatchMod, enabled: true));
                 cache = loadOrder.ToImmutableLinkCache();
             }
             else
             {
-                if (settings.SourcePath == null)
+                if (settings.SourcePaths == null
+                    || !settings.SourcePaths.Any())
                 {
                     patchMod = ModInstantiator<TMod>.Activator(modKey, settings.GameRelease);
                 }
+                else if (settings.SourcePaths.CountGreaterThan(0))
+                {
+                    patchMod = ModInstantiator<TMod>.Importer(new ModPath(modKey, settings.SourcePaths.First()), settings.GameRelease);
+                }
                 else
                 {
-                    patchMod = ModInstantiator<TMod>.Importer(new ModPath(modKey, settings.SourcePath), settings.GameRelease);
+                    throw new NotImplementedException();
                 }
                 cache = loadOrder.ToMutableLinkCache(patchMod);
                 loadOrder.Add(new ModListing<TModGetter>(patchMod, enabled: true));

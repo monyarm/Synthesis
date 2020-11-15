@@ -154,7 +154,7 @@ namespace Synthesis.Bethesda.Execution
                             reporter.ReportStartingRun(patcher.Key, patcher.Run);
                             await patcher.Run.Run(new RunSynthesisPatcher()
                             {
-                                SourcePath = prevPath?.Path,
+                                SourcePaths = prevPath == null ? Array.Empty<string>() : new string[] { prevPath.Path },
                                 OutputPath = nextPath,
                                 DataFolderPath = dataFolder,
                                 GameRelease = release,

@@ -320,7 +320,7 @@ namespace Mutagen.Bethesda.Synthesis
             return new RunSynthesisMutagenPatcher()
             {
                 DataFolderPath = dataPath,
-                SourcePath = null,
+                SourcePaths = Array.Empty<string>(),
                 OutputPath = prefs.NoPatch ? string.Empty : Path.Combine(dataPath, def.IdentifyingModKey.FileName),
                 GameRelease = def.TargetRelease,
                 LoadOrderFilePath = path.Path,

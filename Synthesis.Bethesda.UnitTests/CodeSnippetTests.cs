@@ -12,6 +12,7 @@ using Mutagen.Bethesda;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Oblivion;
 using Mutagen.Bethesda.Synthesis.CLI;
+using System.Linq;
 
 namespace Synthesis.Bethesda.UnitTests
 {
@@ -86,7 +87,7 @@ namespace Synthesis.Bethesda.UnitTests
                 DataFolderPath = dataFolder.Dir.Path,
                 GameRelease = GameRelease.Oblivion,
                 LoadOrderFilePath = Utility.PathToLoadOrderFile,
-                SourcePath = null
+                SourcePaths = Enumerable.Empty<string>()
             });
         }
 
@@ -112,7 +113,7 @@ namespace Synthesis.Bethesda.UnitTests
                 DataFolderPath = dataFolder.Dir.Path,
                 GameRelease = GameRelease.Oblivion,
                 LoadOrderFilePath = Utility.PathToLoadOrderFile,
-                SourcePath = null
+                SourcePaths = Enumerable.Empty<string>()
             });
             Assert.True(File.Exists(outputFile));
         }
@@ -139,7 +140,7 @@ namespace Synthesis.Bethesda.UnitTests
                     DataFolderPath = dataFolder.Dir.Path,
                     GameRelease = GameRelease.Oblivion,
                     LoadOrderFilePath = Utility.PathToLoadOrderFile,
-                    SourcePath = i == 1 ? outputFile : null
+                    SourcePaths = i == 1 ? new string[] { outputFile } : Enumerable.Empty<string>()
                 });
             }
             using var mod = OblivionMod.CreateFromBinaryOverlay(outputFile);
@@ -158,7 +159,7 @@ namespace Synthesis.Bethesda.UnitTests
                 GameRelease = GameRelease.Oblivion,
                 LoadOrderFilePath = Utility.PathToLoadOrderFile,
                 OutputPath = output,
-                SourcePath = null
+                SourcePaths = Enumerable.Empty<string>()
             };
             var factory = CodeSnippetPatcherRun.ConstructStateFactory(GameRelease.Oblivion);
             var stateObj = factory(settings, new UserPreferences());

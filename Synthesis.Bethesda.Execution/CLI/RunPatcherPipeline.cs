@@ -6,10 +6,8 @@ using Synthesis.Bethesda.Execution.Patchers.Git;
 using Synthesis.Bethesda.Execution.Reporters;
 using Synthesis.Bethesda.Execution.Settings;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Synthesis.Bethesda.Execution.CLI

@@ -49,7 +49,7 @@ namespace Synthesis.Bethesda.UnitTests
                     DataFolderPath = dataFolder.Dir.Path,
                     GameRelease = Mutagen.Bethesda.GameRelease.Oblivion,
                     OutputPath = modPath,
-                    SourcePath = null,
+                    SourcePaths = Enumerable.Empty<string>(),
                     LoadOrderFilePath = Utility.PathToLoadOrderFile
                 },
                 PatchFunction);
@@ -72,7 +72,7 @@ namespace Synthesis.Bethesda.UnitTests
                 DataFolderPath = dataFolder.Dir.Path,
                 GameRelease = Mutagen.Bethesda.GameRelease.Oblivion,
                 OutputPath = modPath,
-                SourcePath = null,
+                SourcePaths = Enumerable.Empty<string>(),
                 LoadOrderFilePath = Utility.PathToLoadOrderFile
             };
             SynthesisPipeline.Instance.Patch<IOblivionMod, IOblivionModGetter>(settings, PatchFunction);
@@ -86,7 +86,7 @@ namespace Synthesis.Bethesda.UnitTests
             }
 
             // Run a second time, with sourcepath set containing previous patch
-            settings.SourcePath = modPath;
+            settings.SourcePaths = new string[] { modPath };
             SynthesisPipeline.Instance.Patch<IOblivionMod, IOblivionModGetter>(settings, PatchFunction);
             Assert.True(File.Exists(modPath.Path));
             using (var patch = OblivionMod.CreateFromBinaryOverlay(modPath))
@@ -113,7 +113,7 @@ namespace Synthesis.Bethesda.UnitTests
                        DataFolderPath = dataFolder.Dir.Path,
                        GameRelease = Mutagen.Bethesda.GameRelease.SkyrimLE,
                        OutputPath = modPath,
-                       SourcePath = null,
+                       SourcePaths = Enumerable.Empty<string>(),
                        LoadOrderFilePath = Utility.PathToLoadOrderFile
                    },
                    PatchFunction);
@@ -132,7 +132,7 @@ namespace Synthesis.Bethesda.UnitTests
                     DataFolderPath = dataFolder.Dir.Path,
                     GameRelease = Mutagen.Bethesda.GameRelease.Oblivion,
                     OutputPath = modPath,
-                    SourcePath = null,
+                    SourcePaths = Enumerable.Empty<string>(),
                     LoadOrderFilePath = Utility.PathToLoadOrderFile
                 },
                 new UserPreferences());
@@ -152,7 +152,7 @@ namespace Synthesis.Bethesda.UnitTests
                     DataFolderPath = dataFolder.Dir.Path,
                     GameRelease = Mutagen.Bethesda.GameRelease.Oblivion,
                     OutputPath = modPath,
-                    SourcePath = prevPath,
+                    SourcePaths = new string[] { prevPath },
                     LoadOrderFilePath = Utility.PathToLoadOrderFile
                 },
                 new UserPreferences());
@@ -182,7 +182,7 @@ namespace Synthesis.Bethesda.UnitTests
                     DataFolderPath = dataFolder.Dir.Path,
                     GameRelease = Mutagen.Bethesda.GameRelease.SkyrimLE,
                     OutputPath = modPath,
-                    SourcePath = prevPath,
+                    SourcePaths = new string[] { prevPath },
                     LoadOrderFilePath = pluginsPath
                 },
                 new UserPreferences());
@@ -213,7 +213,7 @@ namespace Synthesis.Bethesda.UnitTests
                     DataFolderPath = dataFolder.Dir.Path,
                     GameRelease = Mutagen.Bethesda.GameRelease.SkyrimSE,
                     OutputPath = modPath,
-                    SourcePath = prevPath,
+                    SourcePaths = new string[] { prevPath },
                     LoadOrderFilePath = pluginsPath
                 },
                 new UserPreferences());
@@ -280,7 +280,7 @@ namespace Synthesis.Bethesda.UnitTests
                 DataFolderPath = dataFolder.Dir.Path,
                 GameRelease = Mutagen.Bethesda.GameRelease.Oblivion,
                 OutputPath = string.Empty,
-                SourcePath = null,
+                SourcePaths = Enumerable.Empty<string>(),
                 LoadOrderFilePath = Utility.PathToLoadOrderFile
             };
             SynthesisPipeline.Instance.Patch<IOblivionMod, IOblivionModGetter>(

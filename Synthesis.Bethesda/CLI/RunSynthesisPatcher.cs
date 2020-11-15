@@ -2,6 +2,7 @@ using CommandLine;
 using Mutagen.Bethesda;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Synthesis.Bethesda
@@ -9,8 +10,8 @@ namespace Synthesis.Bethesda
     [Verb("run-patcher", HelpText = "Run the patcher")]
     public class RunSynthesisPatcher
     {
-        [Option('s', "SourcePath", Required = false, HelpText = "Optional path pointing to the previous patcher result to build onto.")]
-        public string? SourcePath { get; set; }
+        [Option('s', "SourcePaths", Required = false, HelpText = "Optional path(s) pointing to the previous patcher result(s) to build onto.")]
+        public IEnumerable<string> SourcePaths { get; set; } = Enumerable.Empty<string>();
 
         [Option('o', "OutputPath", Required = true, HelpText = "Path where the patcher should place its resulting file.")]
         public string OutputPath { get; set; } = string.Empty;
@@ -27,7 +28,7 @@ namespace Synthesis.Bethesda
         public override string ToString()
         {
             return $"{nameof(RunSynthesisPatcher)} => \n"
-                + $"  {nameof(SourcePath)} => {this.SourcePath} \n"
+                + $"  {nameof(SourcePaths)} => {this.SourcePaths} \n"
                 + $"  {nameof(OutputPath)} => {this.OutputPath} \n"
                 + $"  {nameof(GameRelease)} => {this.GameRelease} \n"
                 + $"  {nameof(DataFolderPath)} => {this.DataFolderPath} \n"

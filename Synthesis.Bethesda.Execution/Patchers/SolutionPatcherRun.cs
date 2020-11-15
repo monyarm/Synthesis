@@ -79,7 +79,7 @@ namespace Synthesis.Bethesda.Execution.Patchers
                 GameRelease = settings.GameRelease,
                 LoadOrderFilePath = settings.LoadOrderFilePath,
                 OutputPath = settings.OutputPath,
-                SourcePath = settings.SourcePath
+                SourcePaths = settings.SourcePaths
             };
             var args = Parser.Default.FormatCommandLine(internalSettings);
             using var process = ProcessWrapper.Start(
