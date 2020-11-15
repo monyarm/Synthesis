@@ -29,7 +29,7 @@ namespace Synthesis.Bethesda.GUI.Views
                     .DisposeWith(disposable);
                 this.BindStrict(this.ViewModel, vm => vm.IsOn, view => view.OnToggle.IsChecked)
                     .DisposeWith(disposable);
-                this.WhenAnyFallback(x => x.ViewModel!.DisplayName)
+                this.WhenAnyFallback(x => x.ViewModel!.Name)
                     .BindToStrict(this, x => x.NameBlock.Text)
                     .DisposeWith(disposable);
 
@@ -38,9 +38,6 @@ namespace Synthesis.Bethesda.GUI.Views
                     .Select(x => x ? Visibility.Collapsed : Visibility.Visible)
                     .BindToStrict(this, x => x.BlockingIssueDisplayCircle.Visibility)
                     .DisposeWith(disposable);
-                //this.WhenAnyFallback(x => x.ViewModel!.DisplayName)
-                //    .BindToStrict(this, x => x.TooltipPatcherName.Text)
-                //    .DisposeWith(disposable);
                 this.WhenAnyFallback(x => x.ViewModel!.State.RunnableState.Reason)
                     .BindToStrict(this, x => x.TooltipErrorText.Text)
                     .DisposeWith(disposable);

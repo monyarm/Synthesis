@@ -95,7 +95,7 @@ namespace Synthesis.Bethesda.GUI
                     vm.State = GetResponse<RunState>.Fail(RunState.Error, i.data.Error);
                     SelectedPatcher = vm;
                     Log.Logger
-                        .ForContext(nameof(PatcherVM.DisplayName), i.data.Run.Name)
+                        .ForContext(nameof(PatcherVM.Name), i.data.Run.Name)
                         .Error(i.data.Error, $"Error while prepping {i.type}");
                 })
                 .DisposeWith(this);
@@ -106,7 +106,7 @@ namespace Synthesis.Bethesda.GUI
                     var vm = Patchers.Get(i.Key);
                     vm.State = GetResponse<RunState>.Succeed(RunState.Started);
                     Log.Logger
-                        .ForContext(nameof(PatcherVM.DisplayName), i.Run.Name)
+                        .ForContext(nameof(PatcherVM.Name), i.Run.Name)
                         .Information($"Starting");
                 })
                 .DisposeWith(this);
@@ -117,7 +117,7 @@ namespace Synthesis.Bethesda.GUI
                     var vm = Patchers.Get(i.Key);
                     vm.State = GetResponse<RunState>.Succeed(RunState.Finished);
                     Log.Logger
-                        .ForContext(nameof(PatcherVM.DisplayName), i.Run.Name)
+                        .ForContext(nameof(PatcherVM.Name), i.Run.Name)
                         .Information("Finished {RunTime}", vm.RunTime);
                 })
                 .DisposeWith(this);
@@ -125,7 +125,7 @@ namespace Synthesis.Bethesda.GUI
                 .Subscribe(s =>
                 {
                     Log.Logger
-                        .ForContextIfNotNull(nameof(PatcherVM.DisplayName), s.Run?.Name)
+                        .ForContextIfNotNull(nameof(PatcherVM.Name), s.Run?.Name)
                         .Information(s.String);
                 })
                 .DisposeWith(this);
@@ -133,7 +133,7 @@ namespace Synthesis.Bethesda.GUI
                 .Subscribe(s =>
                 {
                     Log.Logger
-                        .ForContextIfNotNull(nameof(PatcherVM.DisplayName), s.Run?.Name)
+                        .ForContextIfNotNull(nameof(PatcherVM.Name), s.Run?.Name)
                         .Error(s.String);
                 })
                 .DisposeWith(this);

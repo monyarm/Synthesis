@@ -41,9 +41,6 @@ namespace Synthesis.Bethesda.GUI
             PathType = PathPickerVM.PathTypeOptions.File,
         };
 
-        private readonly ObservableAsPropertyHelper<string> _DisplayName;
-        public override string DisplayName => _DisplayName.Value;
-
         private readonly ObservableAsPropertyHelper<ConfigurationState> _State;
         public override ConfigurationState State => _State.Value;
 
@@ -71,26 +68,6 @@ namespace Synthesis.Bethesda.GUI
             CopyInSettings(settings);
             SolutionPath.Filters.Add(new CommonFileDialogFilter("Solution", ".sln"));
             SelectedProjectPath.Filters.Add(new CommonFileDialogFilter("Project", ".csproj"));
-
-            _DisplayName = Observable.CombineLatest(
-                this.WhenAnyValue(x => x.Nickname),
-                this.WhenAnyValue(x => x.SelectedProjectPath.TargetPath)
-                    .StartWith(settings?.ProjectSubpath ?? string.Empty),
-                (nickname, path) =>
-                {
-                    if (!string.IsNullOrWhiteSpace(nickname)) return nickname;
-                    try
-                    {
-                        var name = Path.GetFileName(Path.GetDirectoryName(path));
-                        if (string.IsNullOrWhiteSpace(name)) return string.Empty;
-                        return name;
-                    }
-                    catch (Exception)
-                    {
-                        return string.Empty;
-                    }
-                })
-                .ToProperty(this, nameof(DisplayName), Nickname);
 
             AvailableProjects = SolutionPatcherConfigLogic.AvailableProject(
                 this.WhenAnyValue(x => x.SolutionPath.TargetPath))
@@ -183,7 +160,7 @@ namespace Synthesis.Bethesda.GUI
                     if (info == null) return;
                     if (info.Nickname != null)
                     {
-                        this.Nickname = info.Nickname;
+                        this.Name = info.Nickname;
                     }
                     this.LongDescription = info.LongDescription ?? string.Empty;
                     this.ShortDescription = info.OneLineDescription ?? string.Empty;
@@ -193,7 +170,7 @@ namespace Synthesis.Bethesda.GUI
                 .DisposeWith(this);
 
             Observable.CombineLatest(
-                    this.WhenAnyValue(x => x.DisplayName),
+                    this.WhenAnyValue(x => x.Name),
                     this.WhenAnyValue(x => x.ShortDescription),
                     this.WhenAnyValue(x => x.LongDescription),
                     this.WhenAnyValue(x => x.Visibility),
@@ -251,10 +228,24 @@ namespace Synthesis.Bethesda.GUI
                 parent,
                 this,
                 new SolutionPatcherRun(
-                    name: DisplayName,
+                    name: Name,
                     pathToSln: SolutionPath.TargetPath,
                     pathToExtraDataBaseFolder: Execution.Constants.TypicalExtraData,
                     pathToProj: SelectedProjectPath.TargetPath));
+        }
+
+        public override string GetDefaultName()
+        {
+            try
+            {
+                var name = Path.GetFileName(Path.GetDirectoryName(SelectedProjectPath.TargetPath));
+                if (string.IsNullOrWhiteSpace(name)) return string.Empty;
+                return name;
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
         }
 
         public class SolutionPatcherConfigLogic

@@ -129,7 +129,7 @@ namespace Synthesis.Bethesda.GUI
                         var blockingError = coll.FirstOrDefault(p => p.State.IsHaltingError);
                         if (blockingError != null)
                         {
-                            return GetResponse<PatcherVM>.Fail(blockingError, $"\"{blockingError.DisplayName}\" has a blocking error");
+                            return GetResponse<PatcherVM>.Fail(blockingError, $"\"{blockingError.Name}\" has a blocking error");
                         }
                         return GetResponse<PatcherVM>.Succeed(null!);
                     })
@@ -185,6 +185,15 @@ namespace Synthesis.Bethesda.GUI
                     _ => throw new NotImplementedException(),
                 };
             }));
+
+            // For backwards compatibility from when patchers didn't need to have a name
+            foreach (var patcher in Patchers.Items)
+            {
+                if (patcher.Name.IsNullOrWhitespace())
+                {
+                    patcher.Name = patcher.GetDefaultName();
+                }
+            }
         }
 
         public SynthesisProfile Save()

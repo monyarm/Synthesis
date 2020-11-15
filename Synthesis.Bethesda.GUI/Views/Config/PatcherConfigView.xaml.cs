@@ -2,20 +2,9 @@ using Noggog;
 using Noggog.WPF;
 using ReactiveUI;
 using System;
-using System.Collections.Generic;
-using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Synthesis.Bethesda.GUI.Views
 {
@@ -31,7 +20,7 @@ namespace Synthesis.Bethesda.GUI.Views
             InitializeComponent();
             this.WhenActivated(disposable =>
             {
-                this.WhenAnyValue(x => x.ViewModel!.DisplayName)
+                this.WhenAnyValue(x => x.ViewModel!.Name)
                     .BindToStrict(this, x => x.PatcherDetailName.Text)
                     .DisposeWith(disposable);
                 this.WhenAnyValue(x => x.ViewModel)
@@ -54,7 +43,7 @@ namespace Synthesis.Bethesda.GUI.Views
                     {
                         if (this.ViewModel.TryGet(out var vm))
                         {
-                            vm.Nickname = x;
+                            vm.Name = x;
                         }
                     })
                     .DisposeWith(disposable);
@@ -63,11 +52,11 @@ namespace Synthesis.Bethesda.GUI.Views
                     {
                         if (focused)
                         {
-                            return this.WhenAnyValue(x => x.ViewModel!.Nickname);
+                            return this.WhenAnyValue(x => x.ViewModel!.Name);
                         }
                         else
                         {
-                            return this.WhenAnyValue(x => x.ViewModel!.DisplayName);
+                            return this.WhenAnyValue(x => x.ViewModel!.Name);
                         }
                     })
                     .Switch()

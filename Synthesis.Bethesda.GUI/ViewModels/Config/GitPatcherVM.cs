@@ -25,9 +25,6 @@ namespace Synthesis.Bethesda.GUI
         [Reactive]
         public string RemoteRepoPath { get; set; } = string.Empty;
 
-        private readonly ObservableAsPropertyHelper<string> _DisplayName;
-        public override string DisplayName => _DisplayName.Value;
-
         private readonly ObservableAsPropertyHelper<ConfigurationState> _State;
         public override ConfigurationState State => _State.Value;
 
@@ -110,30 +107,6 @@ namespace Synthesis.Bethesda.GUI
             var localRepoDir = Path.Combine(Profile.ProfileDirectory, "Git", ID);
             LocalDriverRepoDirectory = Path.Combine(localRepoDir, "Driver");
             LocalRunnerRepoDirectory = GitPatcherRun.RunnerRepoDirectory(Profile.ID, ID);
-
-            _DisplayName = this.WhenAnyValue(
-                x => x.Nickname,
-                x => x.RemoteRepoPath,
-                (nickname, path) =>
-                {
-                    if (!string.IsNullOrWhiteSpace(nickname)) return nickname;
-                    try
-                    {
-                        if (string.IsNullOrWhiteSpace(path)) return "Mutagen Git Patcher";
-                        var span = path.AsSpan();
-                        var slashIndex = span.LastIndexOf('/');
-                        if (slashIndex != -1)
-                        {
-                            span = span.Slice(slashIndex + 1);
-                        }
-                        return span.ToString();
-                    }
-                    catch (Exception)
-                    {
-                        return "Mutagen Git Patcher";
-                    }
-                })
-                .ToGuiProperty<string>(this, nameof(DisplayName));
 
             // Check to see if remote path points to a reachable git repository
             var remoteRepoPath = GetRepoPathValidity(this.WhenAnyValue(x => x.RemoteRepoPath))
@@ -496,7 +469,7 @@ namespace Synthesis.Bethesda.GUI
                 parent,
                 this,
                 new SolutionPatcherRun(
-                    name: DisplayName,
+                    name: Name,
                     pathToSln: RunnableData.SolutionPath,
                     pathToExtraDataBaseFolder: Execution.Constants.TypicalExtraData,
                     pathToProj: RunnableData.ProjPath));
@@ -549,6 +522,25 @@ namespace Synthesis.Bethesda.GUI
             catch (Exception ex)
             {
                 Log.Logger.Error(ex, $"Failure deleting git repo: {this.LocalRunnerRepoDirectory}");
+            }
+        }
+
+        public override string GetDefaultName()
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(RemoteRepoPath)) return "Mutagen Git Patcher";
+                var span = RemoteRepoPath.AsSpan();
+                var slashIndex = span.LastIndexOf('/');
+                if (slashIndex != -1)
+                {
+                    span = span.Slice(slashIndex + 1);
+                }
+                return span.ToString();
+            }
+            catch (Exception)
+            {
+                return "Mutagen Git Patcher";
             }
         }
     }

@@ -29,7 +29,7 @@ namespace Synthesis.Bethesda.GUI.Views
             InitializeComponent();
             this.WhenActivated(disposable =>
             {
-                this.BindStrict(this.ViewModel, vm => vm.DisplayName, view => view.PatcherDetailName.Text)
+                this.BindStrict(this.ViewModel, vm => vm.Nickname, view => view.PatcherDetailName.Text)
                     .DisposeWith(disposable);
                 this.WhenAnyValue(x => x.ViewModel)
                     .BindToStrict(this, x => x.PatcherIconDisplay.DataContext)

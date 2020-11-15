@@ -54,7 +54,6 @@
                 Margin="0,0,10,0"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Top"
-                mahapps:TextBoxHelper.Watermark="Patcher Name"
                 Background="Transparent"
                 BorderThickness="0"
                 FontSize="26"

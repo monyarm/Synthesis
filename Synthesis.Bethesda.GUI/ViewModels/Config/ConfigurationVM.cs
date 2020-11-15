@@ -157,7 +157,14 @@ namespace Synthesis.Bethesda.GUI
         {
             NewPatcher = null;
             if (patchersToAdd.Count == 0) return;
-            patchersToAdd.ForEach(p => p.IsOn = true);
+            patchersToAdd.ForEach(p =>
+            {
+                p.IsOn = true;
+                if (p.Name.IsNullOrWhitespace())
+                {
+                    p.Name = p.GetDefaultName();
+                }
+            });
             SelectedProfile?.Patchers.AddRange(patchersToAdd);
             SelectedPatcher = patchersToAdd.First();
         }

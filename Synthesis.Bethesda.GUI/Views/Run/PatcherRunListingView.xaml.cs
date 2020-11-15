@@ -1,18 +1,7 @@
-﻿using Noggog.WPF;
+using Noggog.WPF;
 using ReactiveUI;
 using System.Reactive.Disposables;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Reactive.Linq;
 
 namespace Synthesis.Bethesda.GUI.Views
@@ -29,7 +18,7 @@ namespace Synthesis.Bethesda.GUI.Views
             InitializeComponent();
             this.WhenActivated(disposable =>
             {
-                this.WhenAnyValue(x => x.ViewModel!.Config.DisplayName)
+                this.WhenAnyValue(x => x.ViewModel!.Config.Name)
                     .BindToStrict(this, x => x.NameBlock.Text)
                     .DisposeWith(disposable);
                 this.WhenAnyValue(x => x.ViewModel!.IsSelected)

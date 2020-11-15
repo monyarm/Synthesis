@@ -4,10 +4,8 @@ using Noggog;
 using Noggog.WPF;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Text;
 using System.Windows.Input;
 using System.Threading;
 using Serilog;
@@ -28,9 +26,7 @@ namespace Synthesis.Bethesda.GUI
         public bool IsOn { get; set; } = true;
 
         [Reactive]
-        public string Nickname { get; set; } = string.Empty;
-
-        public abstract string DisplayName { get; }
+        public string Name { get; set; } = string.Empty;
 
         public ICommand DeleteCommand { get; }
 
@@ -49,13 +45,13 @@ namespace Synthesis.Bethesda.GUI
 
             // Set to settings
             IsOn = settings?.On ?? false;
-            Nickname = settings?.Nickname ?? string.Empty;
+            Name = settings?.Nickname ?? string.Empty;
 
             DeleteCommand = ReactiveCommand.Create(() =>
             {
                 parent.Config.MainVM.ActiveConfirmation = new ConfirmationActionVM(
                     "Confirm",
-                    $"Are you sure you want to delete {DisplayName}?",
+                    $"Are you sure you want to delete {Name}?",
                     Delete);
             });
         }
@@ -65,7 +61,7 @@ namespace Synthesis.Bethesda.GUI
         protected void CopyOverSave(PatcherSettings settings)
         {
             settings.On = IsOn;
-            settings.Nickname = Nickname;
+            settings.Nickname = Name;
         }
 
         public abstract PatcherRunVM ToRunner(PatchersRunVM parent);
@@ -75,6 +71,8 @@ namespace Synthesis.Bethesda.GUI
             Profile.Patchers.Remove(this);
         }
 
-        protected ILogger Logger =>  Log.Logger.ForContext(nameof(DisplayName), DisplayName);
+        protected ILogger Logger => Log.Logger.ForContext(nameof(Name), Name);
+
+        public abstract string GetDefaultName();
     }
 }

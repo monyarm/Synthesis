@@ -12,9 +12,6 @@ namespace Synthesis.Bethesda.GUI
 {
     public class CliPatcherVM : PatcherVM
     {
-        private readonly ObservableAsPropertyHelper<string> _DisplayName;
-        public override string DisplayName => _DisplayName.Value;
-
         public readonly PathPickerVM PathToExecutable = new PathPickerVM()
         {
              PathType = PathPickerVM.PathTypeOptions.File,
@@ -28,29 +25,6 @@ namespace Synthesis.Bethesda.GUI
             : base(parent, settings)
         {
             CopyInSettings(settings);
-            _DisplayName = this.WhenAnyValue(
-                    x => x.Nickname,
-                    x => x.PathToExecutable.TargetPath,
-                    (Nickname, PathToExecutable) => (Nickname, PathToExecutable))
-                .Select(x =>
-                {
-                    if (string.IsNullOrWhiteSpace(x.Nickname))
-                    {
-                        try
-                        {
-                            return Path.GetFileNameWithoutExtension(x.PathToExecutable);
-                        }
-                        catch (Exception)
-                        {
-                            return "<Naming Error>";
-                        }
-                    }
-                    else
-                    {
-                        return x.Nickname;
-                    }
-                })
-                .ToGuiProperty<string>(this, nameof(DisplayName));
 
             _State = this.WhenAnyValue(x => x.PathToExecutable.ErrorState)
                 .Select(e =>
@@ -86,9 +60,21 @@ namespace Synthesis.Bethesda.GUI
                 parent, 
                 this, 
                 new CliPatcherRun(
-                    nickname: DisplayName, 
+                    nickname: Name, 
                     pathToExecutable: PathToExecutable.TargetPath, 
                     pathToExtra: null));
+        }
+
+        public override string GetDefaultName()
+        {
+            try
+            {
+                return Path.GetFileNameWithoutExtension(PathToExecutable.TargetPath);
+            }
+            catch (Exception)
+            {
+                return "<Naming Error>";
+            }
         }
     }
 }

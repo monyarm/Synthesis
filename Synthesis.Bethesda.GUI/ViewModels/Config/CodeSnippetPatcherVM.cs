@@ -18,9 +18,6 @@ namespace Synthesis.Bethesda.GUI
 {
     public class CodeSnippetPatcherVM : PatcherVM
     {
-        private readonly ObservableAsPropertyHelper<string> _DisplayName;
-        public override string DisplayName => _DisplayName.Value;
-
         public string ID { get; private set; } = string.Empty;
 
         [Reactive]
@@ -42,19 +39,6 @@ namespace Synthesis.Bethesda.GUI
             : base(parent, settings)
         {
             CopyInSettings(settings);
-            _DisplayName = this.WhenAnyValue(x => x.Nickname)
-                .Select(x =>
-                {
-                    if (string.IsNullOrWhiteSpace(x))
-                    {
-                        return "<No Name>";
-                    }
-                    else
-                    {
-                        return x;
-                    }
-                })
-                .ToGuiProperty<string>(this, nameof(DisplayName));
 
             IObservable<(MemoryStream? AssemblyStream, EmitResult? CompileResults, Exception? Exception)> compileResults =
                 Observable.Merge(
@@ -187,7 +171,7 @@ namespace Synthesis.Bethesda.GUI
                 parent,
                 this,
                 new CodeSnippetPatcherRun(
-                    Nickname,
+                    Name,
                     ActiveAssembly));
         }
 
@@ -231,6 +215,11 @@ namespace Synthesis.Bethesda.GUI
                 RunnableState = ErrorResponse.Fail(errDiag.ToString()),
                 IsHaltingError = true,
             };
+        }
+
+        public override string GetDefaultName()
+        {
+            return string.Empty;
         }
     }
 
