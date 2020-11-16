@@ -110,14 +110,17 @@ namespace Synthesis.Bethesda.GUI
                 .Switch()
                 .AsObservableList();
 
+            var onPatchers = Patchers.Connect()
+                .AutoRefresh(x => x.IsOn)
+                .Filter(p => p.IsOn)
+                .RefCount();
+
             _LargeOverallError = Observable.CombineLatest(
                     dataFolderResult,
                     loadOrderResult
                         .Select(x => x.State)
                         .Switch(),
-                    Patchers.Connect()
-                        .AutoRefresh(x => x.IsOn)
-                        .Filter(p => p.IsOn)
+                    onPatchers
                         .AutoRefresh(x => x.State)
                         .QueryWhenChanged(q => q)
                         .StartWith(Noggog.ListExt.Empty<PatcherVM>()),
@@ -131,15 +134,14 @@ namespace Synthesis.Bethesda.GUI
                         {
                             return GetResponse<PatcherVM>.Fail(blockingError, $"\"{blockingError.Name}\" has a blocking error");
                         }
+
                         return GetResponse<PatcherVM>.Succeed(null!);
                     })
                 .ToGuiProperty(this, nameof(LargeOverallError), GetResponse<PatcherVM>.Fail("Uninitialized"));
 
             _BlockingError = Observable.CombineLatest(
                     this.WhenAnyValue(x => x.LargeOverallError),
-                    Patchers.Connect()
-                        .AutoRefresh(x => x.IsOn)
-                        .Filter(p => p.IsOn)
+                    onPatchers
                         .AutoRefresh(x => x.State)
                         .Transform(p => p.State, transformOnRefresh: true)
                         .QueryWhenChanged(errs =>

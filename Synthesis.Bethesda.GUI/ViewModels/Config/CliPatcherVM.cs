@@ -18,15 +18,15 @@ namespace Synthesis.Bethesda.GUI
              ExistCheckOption = PathPickerVM.CheckOptions.On,
         };
 
-        private readonly ObservableAsPropertyHelper<ConfigurationState> _State;
-        public override ConfigurationState State => _State.Value;
+        private readonly ObservableAsPropertyHelper<ConfigurationState> _InternalState;
+        protected override ConfigurationState InternalState => _InternalState?.Value ?? ConfigurationState.Evaluating;
 
         public CliPatcherVM(ProfileVM parent, CliPatcherSettings? settings = null)
             : base(parent, settings)
         {
             CopyInSettings(settings);
 
-            _State = this.WhenAnyValue(x => x.PathToExecutable.ErrorState)
+            _InternalState = this.WhenAnyValue(x => x.PathToExecutable.ErrorState)
                 .Select(e =>
                 {
                     return new ConfigurationState()
@@ -35,7 +35,7 @@ namespace Synthesis.Bethesda.GUI
                         RunnableState = e
                     };
                 })
-                .ToGuiProperty<ConfigurationState>(this, nameof(State), new ConfigurationState(ErrorResponse.Fail("Evaluating"))
+                .ToGuiProperty<ConfigurationState>(this, nameof(InternalState), new ConfigurationState(ErrorResponse.Fail("Evaluating"))
                 {
                     IsHaltingError = false
                 });

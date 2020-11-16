@@ -41,8 +41,8 @@ namespace Synthesis.Bethesda.GUI
             PathType = PathPickerVM.PathTypeOptions.File,
         };
 
-        private readonly ObservableAsPropertyHelper<ConfigurationState> _State;
-        public override ConfigurationState State => _State.Value;
+        private readonly ObservableAsPropertyHelper<ConfigurationState> _InternalState;
+        protected override ConfigurationState InternalState => _InternalState?.Value ?? ConfigurationState.Evaluating;
 
         public ICommand OpenSolutionCommand { get; }
 
@@ -81,7 +81,7 @@ namespace Synthesis.Bethesda.GUI
                 .Subscribe(p => SelectedProjectPath.TargetPath = p)
                 .DisposeWith(this);
 
-            _State = Observable.CombineLatest(
+            _InternalState = Observable.CombineLatest(
                     this.WhenAnyValue(x => x.SolutionPath.ErrorState),
                     this.WhenAnyValue(x => x.SelectedProjectPath.ErrorState),
                     this.WhenAnyValue(x => x.Profile.Config.MainVM)
@@ -93,7 +93,7 @@ namespace Synthesis.Bethesda.GUI
                         if (dotnet == null) return new ConfigurationState(ErrorResponse.Fail("No dotnet SDK installed"));
                         return new ConfigurationState(proj);
                     })
-                .ToGuiProperty<ConfigurationState>(this, nameof(State), new ConfigurationState(ErrorResponse.Fail("Evaluating"))
+                .ToGuiProperty<ConfigurationState>(this, nameof(InternalState), new ConfigurationState(ErrorResponse.Fail("Evaluating"))
                 {
                     IsHaltingError = false
                 });

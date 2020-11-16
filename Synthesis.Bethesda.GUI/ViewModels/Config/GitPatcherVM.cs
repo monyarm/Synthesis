@@ -25,8 +25,8 @@ namespace Synthesis.Bethesda.GUI
         [Reactive]
         public string RemoteRepoPath { get; set; } = string.Empty;
 
-        private readonly ObservableAsPropertyHelper<ConfigurationState> _State;
-        public override ConfigurationState State => _State.Value;
+        private readonly ObservableAsPropertyHelper<ConfigurationState> _InternalState;
+        protected override ConfigurationState InternalState => _InternalState?.Value ?? ConfigurationState.Evaluating;
 
         public string ID { get; private set; } = string.Empty;
 
@@ -363,7 +363,7 @@ namespace Synthesis.Bethesda.GUI
                     (matchVersion, selVersion) => (matchVersion, selVersion))
                 .ToGuiProperty(this, nameof(UsedSynthesisVersion));
 
-            _State = Observable.CombineLatest(
+            _InternalState = Observable.CombineLatest(
                     driverRepoInfo
                         .Select(x => x.ToUnit()),
                     runnerRepoState,
@@ -379,10 +379,7 @@ namespace Synthesis.Bethesda.GUI
                         if (dotnet == null) return new ConfigurationState(ErrorResponse.Fail("No dotnet SDK installed"));
                         return checkout;
                     })
-                .ToGuiProperty<ConfigurationState>(this, nameof(State), new ConfigurationState(ErrorResponse.Fail("Evaluating"))
-                {
-                    IsHaltingError = false
-                });
+                .ToGuiProperty<ConfigurationState>(this, nameof(InternalState), ConfigurationState.Evaluating);
 
             OpenGitPageCommand = ReactiveCommand.Create(
                 canExecute: this.WhenAnyValue(x => x.RepoValidity)

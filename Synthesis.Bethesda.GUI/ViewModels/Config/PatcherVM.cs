@@ -30,9 +30,12 @@ namespace Synthesis.Bethesda.GUI
 
         public ICommand DeleteCommand { get; }
 
-        public abstract ConfigurationState State { get; }
+        protected abstract ConfigurationState InternalState { get; }
 
         private static int NextID;
+
+        private readonly ObservableAsPropertyHelper<ConfigurationState> _State;
+        public ConfigurationState State => _State.Value;
 
         public PatcherVM(ProfileVM parent, PatcherSettings? settings)
         {
@@ -54,6 +57,24 @@ namespace Synthesis.Bethesda.GUI
                     $"Are you sure you want to delete {Name}?",
                     Delete);
             });
+
+            _State = Observable.CombineLatest(
+                    this.WhenAnyValue(x => x.InternalState),
+                    parent.Patchers.Connect()
+                        .QueryWhenChanged(q =>
+                        {
+                            foreach (var patcher in q)
+                            {
+                                if (!ReferenceEquals(this, patcher) && patcher.Name.Equals(this.Name))
+                                {
+                                    return ErrorResponse.Fail("Duplicate name");
+                                }
+                            }
+                            return ErrorResponse.Success;
+                        })
+                        .Select(e => new ConfigurationState(e)),
+                    (subState, dup) => ConfigurationState.Combine(subState, dup))
+                .ToGuiProperty(this, nameof(State), ConfigurationState.Evaluating);
         }
 
         public abstract PatcherSettings Save();

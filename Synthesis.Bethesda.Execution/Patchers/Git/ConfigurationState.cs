@@ -1,8 +1,6 @@
 using Noggog;
 using System;
-using System.Collections.Generic;
 using System.Reactive;
-using System.Text;
 
 namespace Synthesis.Bethesda.Execution.Patchers.Git
 {
@@ -23,6 +21,23 @@ namespace Synthesis.Bethesda.Execution.Patchers.Git
         public static implicit operator ConfigurationState(ErrorResponse err)
         {
             return new ConfigurationState(err);
+        }
+
+        public static ConfigurationState Combine(params ConfigurationState[] states)
+        {
+            if (states.Length == 0) throw new ArgumentException();
+
+            foreach (var state in states)
+            {
+                if (state.IsHaltingError) return state;
+            }
+
+            foreach (var state in states)
+            {
+                if (state.RunnableState.Failed) return state;
+            }
+
+            return states[0];
         }
     }
 
@@ -78,5 +93,27 @@ namespace Synthesis.Bethesda.Execution.Patchers.Git
         {
             return new ConfigurationState<T>(err);
         }
+
+        public static ConfigurationState<T> Combine(params ConfigurationState<T>[] states)
+        {
+            if (states.Length == 0) throw new ArgumentException();
+
+            foreach (var state in states)
+            {
+                if (state.IsHaltingError) return state;
+            }
+
+            foreach (var state in states)
+            {
+                if (state.RunnableState.Failed) return state;
+            }
+
+            return states[0];
+        }
+
+        public static ConfigurationState Evaluating => new ConfigurationState(ErrorResponse.Fail("Evaluating"))
+        {
+            IsHaltingError = false
+        };
     }
 }

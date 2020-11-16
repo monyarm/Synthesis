@@ -23,8 +23,8 @@ namespace Synthesis.Bethesda.GUI
         [Reactive]
         public string Code { get; set; } = string.Empty;
 
-        private readonly ObservableAsPropertyHelper<ConfigurationState> _State;
-        public override ConfigurationState State => _State.Value;
+        private readonly ObservableAsPropertyHelper<ConfigurationState> _InternalState;
+        protected override ConfigurationState InternalState => _InternalState?.Value ?? ConfigurationState.Evaluating;
 
         private readonly ObservableAsPropertyHelper<string> _CompilationText;
         public string CompilationText => _CompilationText.Value;
@@ -121,7 +121,7 @@ namespace Synthesis.Bethesda.GUI
                 .Select(results => results.Item2)
                 .ToGuiProperty(this, nameof(ActiveAssembly));
 
-            _State = stateAndAssembly
+            _InternalState = stateAndAssembly
                 .Select(results =>
                 {
                     if (!results.state.RunnableState.Succeeded) return results.state;
@@ -135,7 +135,7 @@ namespace Synthesis.Bethesda.GUI
                     }
                     return ConfigurationState.Success;
                 })
-                .ToGuiProperty<ConfigurationState>(this, nameof(State), new ConfigurationState(ErrorResponse.Fail("Evaluating"))
+                .ToGuiProperty<ConfigurationState>(this, nameof(InternalState), new ConfigurationState(ErrorResponse.Fail("Evaluating"))
                 {
                     IsHaltingError = false
                 });
