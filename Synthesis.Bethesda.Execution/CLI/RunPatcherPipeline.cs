@@ -35,7 +35,7 @@ namespace Synthesis.Bethesda.Execution.CLI
                 else
                 {
                     var settings = JsonConvert.DeserializeObject<PipelineSettings>(File.ReadAllText(run.ProfileDefinitionPath), Constants.JsonSettings)!;
-                    profile = settings.Profiles.FirstOrDefault(profile =>
+                    profile = settings.Profiles.First(profile =>
                     {
                         if (run.ProfileName.Equals(profile.Nickname)) return true;
                         if (run.ProfileName.Equals(profile.ID)) return true;

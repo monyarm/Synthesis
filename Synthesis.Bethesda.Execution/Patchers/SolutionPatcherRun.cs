@@ -141,7 +141,7 @@ namespace Synthesis.Bethesda.Execution.Patchers
             using var process = ProcessWrapper.Start(
                 new ProcessStartInfo("dotnet", $"build --runtime win-x64 \"{Path.GetFileName(targetPath)}\"")
                 {
-                    WorkingDirectory = Path.GetDirectoryName(targetPath)
+                    WorkingDirectory = Path.GetDirectoryName(targetPath)!
                 },
                 cancel: cancel);
             string? firstError = null;
@@ -188,7 +188,7 @@ namespace Synthesis.Bethesda.Execution.Patchers
 
         private async Task CopyOverExtraData()
         {
-            var inputExtraData = new DirectoryInfo(Path.Combine(Path.GetDirectoryName(PathToProject), "Data"));
+            var inputExtraData = new DirectoryInfo(Path.Combine(Path.GetDirectoryName(PathToProject)!, "Data"));
             if (!inputExtraData.Exists)
             {
                 _output.OnNext("No extra data to consider.");

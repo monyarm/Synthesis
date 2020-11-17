@@ -84,7 +84,7 @@ namespace Synthesis.Bethesda.GUI
 
             _CompilationText = compileState
                 .Select(err => err.RunnableState.Reason)
-                .ToGuiProperty<string>(this, nameof(CompilationText));
+                .ToGuiProperty(this, nameof(CompilationText), string.Empty);
 
             _CompilationStatus = compileResults
                 .Select(results =>
@@ -119,7 +119,7 @@ namespace Synthesis.Bethesda.GUI
 
             _ActiveAssembly = stateAndAssembly
                 .Select(results => results.Item2)
-                .ToGuiProperty(this, nameof(ActiveAssembly));
+                .ToGuiProperty(this, nameof(ActiveAssembly), initialValue: default);
 
             _InternalState = stateAndAssembly
                 .Select(results =>

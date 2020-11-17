@@ -1,4 +1,4 @@
-﻿using Noggog.WPF;
+using Noggog.WPF;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -37,7 +37,7 @@ namespace Synthesis.Bethesda.GUI
             Func<TInput, (TJob? Job, IObservable<Unit> CompletionSignal)> jobCreator,
             IObservable<TInput> extraInput,
             out IObservable<TJob?> createdJobs,
-            IObservable<bool>? canExecute = null,
+            IObservable<bool> canExecute,
             IScheduler? outputScheduler = null)
             where TJob : class
         {

@@ -26,8 +26,9 @@ namespace Synthesis.Bethesda.Execution.Patchers.Git
             return obj is NugetVersioning versioning && Equals(versioning);
         }
 
-        public bool Equals(NugetVersioning other)
+        public bool Equals(NugetVersioning? other)
         {
+            if (other == null) return false;
             return Versioning == other.Versioning &&
                 ManualVersion == other.ManualVersion &&
                 NewestVersion == other.NewestVersion;

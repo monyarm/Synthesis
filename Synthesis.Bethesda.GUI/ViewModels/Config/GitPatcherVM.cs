@@ -142,7 +142,7 @@ namespace Synthesis.Bethesda.GUI
                         try
                         {
                             using var repo = new Repository(LocalDriverRepoDirectory);
-                            var master = repo.Branches.Where(b => b.IsCurrentRepositoryHead).FirstOrDefault();
+                            var master = repo.Branches.Where(b => b.IsCurrentRepositoryHead).First();
                             masterBranch = master.FriendlyName;
                             repo.Reset(ResetMode.Hard);
                             Commands.Checkout(repo, master);
@@ -239,7 +239,7 @@ namespace Synthesis.Bethesda.GUI
             driverRepoInfo.Select(x => x.RunnableState.Failed ? string.Empty : x.Item.Tags.OrderByDescending(x => x.Index).Select(x => x.Name).FirstOrDefault())
                 .FilterSwitch(this.WhenAnyValue(x => x.LatestTag))
                 .Throttle(TimeSpan.FromMilliseconds(150), RxApp.MainThreadScheduler)
-                .Subscribe(x => TargetTag = x)
+                .Subscribe(x => TargetTag = x ?? string.Empty)
                 .DisposeWith(this);
 
             // Get the selected versioning preferences
@@ -347,7 +347,7 @@ namespace Synthesis.Bethesda.GUI
 
             _RunnableData = runnableState
                 .Select(x => x.RunnableState.Succeeded ? x.Item : default(RunnerRepoInfo?))
-                .ToGuiProperty(this, nameof(RunnableData));
+                .ToGuiProperty(this, nameof(RunnableData), initialValue: default);
 
             _UsedMutagenVersion = Observable.CombineLatest(
                     this.WhenAnyValue(x => x.RunnableData)

@@ -61,7 +61,7 @@ namespace Synthesis.Bethesda.GUI
                 .RefCount();
             _TargetSolutionInitializer = call
                 .Select(x => x.Succeeded ? x.Value : default(ASolutionInitializer.InitializerCall?))
-                .ToGuiProperty(this, nameof(TargetSolutionInitializer));
+                .ToGuiProperty(this, nameof(TargetSolutionInitializer), string.Empty);
             _CanCompleteConfiguration = call
                 .Select(x => (ErrorResponse)x)
                 .ToGuiProperty<ErrorResponse>(this, nameof(CanCompleteConfiguration), ErrorResponse.Failure);
