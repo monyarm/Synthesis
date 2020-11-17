@@ -55,7 +55,7 @@ namespace Synthesis.Bethesda.Execution.CLI
 
                 if (run.LoadOrderFilePath.IsNullOrWhitespace())
                 {
-                    run.LoadOrderFilePath = LoadOrder.GetPluginsPath(run.GameRelease);
+                    run.LoadOrderFilePath = PluginListings.GetListingsPath(run.GameRelease);
                 }
 
                 reporter?.Write(default, "Patchers to run:");
@@ -91,7 +91,7 @@ namespace Synthesis.Bethesda.Execution.CLI
                     workingDirectory: Constants.ProfileWorkingDirectory(profile.ID),
                     outputPath: run.OutputPath,
                     dataFolder: run.DataFolderPath,
-                    loadOrder: LoadOrder.GetLoadOrder(run.GameRelease, run.DataFolderPath),
+                    loadOrder: LoadOrder.GetListings(run.GameRelease, dataPath: run.DataFolderPath),
                     release: run.GameRelease,
                     patchers: patchers,
                     sourcePath: run.SourcePath == null ? default : ModPath.FromPath(run.SourcePath),
