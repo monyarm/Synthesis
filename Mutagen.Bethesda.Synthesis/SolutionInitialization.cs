@@ -45,7 +45,7 @@ namespace Mutagen.Bethesda.Synthesis
             var projName = Path.GetFileNameWithoutExtension(projPath);
 
             // Generate Project File
-            FileGeneration fg = new FileGeneration();
+            FileGeneration fg = new();
             fg.AppendLine("<Project Sdk=\"Microsoft.NET.Sdk\">");
             fg.AppendLine($"  <PropertyGroup>");
             fg.AppendLine($"    <OutputType>Exe</OutputType>");
@@ -83,16 +83,8 @@ namespace Mutagen.Bethesda.Synthesis
                         using (new DepthWrapper(fg))
                         {
                             fg.AppendLine($".AddPatch<I{category}Mod, I{category}ModGetter>(RunPatch)");
-                            fg.AppendLine($".Run(args, new {nameof(RunPreferences)}()");
-                            using (new BraceWrapper(fg) { AppendParenthesis = true, AppendSemicolon = true })
-                            {
-                                fg.AppendLine($"{nameof(UserPreferences.ActionsForEmptyArgs)} = new {nameof(RunDefaultPatcher)}()");
-                                using (new BraceWrapper(fg))
-                                {
-                                    fg.AppendLine($"{nameof(RunDefaultPatcher.IdentifyingModKey)} = \"YourPatcher.esp\",");
-                                    fg.AppendLine($"{nameof(RunDefaultPatcher.TargetRelease)} = {nameof(GameRelease)}.{category.DefaultRelease()},");
-                                }
-                            }
+                            fg.AppendLine($".SetTypicalOpen({nameof(GameRelease)}.{category.DefaultRelease()}, \"YourPatcher.esp\")");
+                            fg.AppendLine($".Run(args);");
                         }
                     }
                     fg.AppendLine();
@@ -119,7 +111,7 @@ namespace Mutagen.Bethesda.Synthesis
             Directory.CreateDirectory(slnDir);
 
             // Create solution
-            FileGeneration fg = new FileGeneration();
+            FileGeneration fg = new();
             fg.AppendLine($"Microsoft Visual Studio Solution File, Format Version 12.00");
             fg.AppendLine($"# Visual Studio Version 16");
             fg.AppendLine($"VisualStudioVersion = 16.0.30330.147");
@@ -128,6 +120,10 @@ namespace Mutagen.Bethesda.Synthesis
 
             // Create editorconfig
             fg = new FileGeneration();
+            fg.AppendLine("[*]");
+            fg.AppendLine("charset = utf-8");
+            fg.AppendLine("end_of_line = crlf");
+            fg.AppendLine();
             fg.AppendLine("[*.cs]");
             fg.AppendLine();
             fg.AppendLine("# CS4014: Task not awaited");
